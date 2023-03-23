@@ -9,7 +9,7 @@ public class HomeController {
 
 	@GetMapping("/")
 	public String home(Model model) {
-		model.addAttribute("message", "Welcome to Patient Management App");
+		model.addAttribute("message", "Welcome to Patient Management Application");
 		return "index";
 	}
 }
