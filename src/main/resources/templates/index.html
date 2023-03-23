@@ -2,12 +2,14 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Welcome to the patient management UI now!</title>
+    <title>Welcome to the patient management Application</title>
 </head>
 <body>
     <h1 th:text="${message}"></h1>
     <ul>
+		<p style = "font-size: 30px;">---Get All Registered patients</p>
         <li><a href="/patient/getAll">Get All Patients</a></li>
+        <p style = "font-size: 30px;">---Get All Registered patients</p>
         <li><a href="/service/getAll">Get All Services</a></li>
     </ul>
 </body>
