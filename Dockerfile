@@ -1,4 +1,4 @@
-FROM java:17
+FROM openjdk:17-oracle
 WORKDIR /
 ADD /home/runner/work/Microservices-assignment-1/Microservices-assignment-1/target/Patient-Management-0.0.1-SNAPSHOT.jar demo.jar
 EXPOSE 8080
