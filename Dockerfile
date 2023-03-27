@@ -1,4 +1,4 @@
-FROM openjdk:17-oracle
+FROM maven:3.8.3-openjdk-17
 
 WORKDIR /
 
@@ -8,4 +8,4 @@ RUN mvn clean package
 
 EXPOSE 8080
 
-CMD ["java", "-jar", "/demo.jar"]
+CMD ["java", "-jar", "/Patient-Management-0.0.1-SNAPSHOT.jar"]
