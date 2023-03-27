@@ -34,7 +34,7 @@ jobs:
       with:
         image: ashish21bd/gitactions-test
         tags: v1, latest
-        dockerfile: /src
+        dockerfile: ./src
         registry: docker.io
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
