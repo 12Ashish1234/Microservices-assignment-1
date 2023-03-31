@@ -23,7 +23,7 @@ jobs:
       with:
         path: ~/.sonar/new-cache
         key: ${{ runner.os }}-sonar-new-key
-        restore-keys: ${{ runner.os }}-sonar
+        restore-keys: ${{ runner.os }}-sonar-new-key
 
 # Cache maven packages below is used to improve workflow time
     - name: Cache Maven packages
