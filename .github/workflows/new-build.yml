@@ -18,7 +18,7 @@ jobs:
         cache: maven
 
     - name: Set up and analyze SonarCloud
-      uses: sonarsource/sonarcloud-github-action@v1
+      uses: sonarsource/sonarcloud-github-action@master
       env:
         SONAR_USER_HOME: ./sonar/cache-test
       with:
