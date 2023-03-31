@@ -21,9 +21,9 @@ jobs:
     - name: Cache SonarCloud packages
       uses: actions/cache@v3
       with:
-        path: ~/.sonar/new-cache
-        key: ${{ runner.os }}-sonar-new-key
-        restore-keys: ${{ runner.os }}-sonar-new-key
+        path: ~/.sonar/cache
+        key: ${{ runner.os }}-sonar
+        restore-keys: ${{ runner.os }}-sonar
 
 # Cache maven packages below is used to improve workflow time
     - name: Cache Maven packages
