@@ -1,0 +1,27 @@
+name: Checks for pull request
+
+on:
+  pull_request:
+    branches: [ "main" ]
+    types: [opened, synchronize, reopened]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: Set up and analyze SonarCloud
+      uses: sonarsource/sonarcloud-github-action@v1
+      env:
+        SONAR_USER_HOME: ./sonar/cache-test
+      with:
+          organization: 12ashish1234
+          project: Microservices-assignment-1
+          token: ${{ secrets.SONAR_TOKEN }}
