@@ -43,3 +43,34 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=12Ashish1234_Microservices-assignment-1
+
+# STACKHAWK scanning
+  stackhawk:
+    permissions:
+      contents: read # for actions/checkout to fetch code
+      security-events: write # for stackhawk/hawkscan-action to upload code scanning alert info
+    name: StackHawk
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+# Setting up of JDK is required because of version compatibility issues
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Start your service and add JDK 17
+        run: mvn spring-boot:run &                 # ✏️ Update this to run your own service to be scanned
+
+      - name: Run HawkScan
+        # uses: stackhawk/hawkscan-action@4c3258cd62248dac6d9fe91dd8d45928c697dee0      # This line here expects to find the STACKHAWK API key in a github secret named HAWK_API_KEY. Its used for saving the scan results
+        uses: stackhawk/hawkscan-action@v2.0.2
+        continue-on-error: true                   # ✏️ Set to false to break your build on scan errors
+        with:
+          apiKey: ${{ secrets.HAWK_API_KEY }}
+          codeScanningAlerts: true
+          githubToken: ${{ github.token }}
