@@ -98,3 +98,5 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           target: 'http://localhost:8080'
+
+# Random comment to check the "Status checks to pass before merging"
