@@ -58,6 +58,5 @@ jobs:
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
     - run: |
-           docker build ./src/
-#          docker build ./src/ -t testacrspringapp.azurecr.io/test-app:latest
-#          docker push testacrspringapp.azurecr.io/test-app:${{ github.sha }}
+          docker build . -t testacrspringapp.azurecr.io/test-app:latest
+          docker push testacrspringapp.azurecr.io/test-app:${{ github.sha }}
