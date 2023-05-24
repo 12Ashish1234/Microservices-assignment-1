@@ -2,7 +2,7 @@ name: Checks for pull request
 
 on:
   pull_request:
-    branches: [ "main" ]
+    branches: [ "development" ]
     types: [opened, synchronize, reopened]
 jobs:
   build:
