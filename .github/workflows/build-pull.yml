@@ -2,7 +2,7 @@ name: Checks for pull request
 
 on:
   pull_request:
-    branches: [ "main" ]
+    branches: [ "development" ]
     types: [opened, synchronize, reopened]
 jobs:
   build:
@@ -17,84 +17,10 @@ jobs:
         distribution: 'temurin'
         cache: maven
 
-# Sonar CLoud packages
-    - name: Cache SonarCloud packages
-      uses: actions/cache@v3
-      with:
-        path: ~/.sonar/new-cache
-        key: ${{ runner.os }}-sonar-new-key
-        restore-keys: ${{ runner.os }}-sonar-new-key
+# Jfrog artifactory login   
+    - name: Login to DockerHub Registry, build and push
+      run: |
+          docker login -u ${{ secrets.JFROG_REGISTRY_USERNAME }} -p ${{ secrets.JFROG_REGISTRY_PASSWORD }} automotiveproject.jfrog.io
+          docker build . -t automotiveproject.jfrog.io/docker-local/springboot-app:${{ github.run_number }}
+          docker push automotiveproject.jfrog.io/docker-local/springboot-app:${{ github.run_number }}
 
-# Cache maven packages below is used to improve workflow time
-    - name: Cache Maven packages
-      uses: actions/cache@v3
-      with:
-        path: ~/.m2
-        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-m2
-
-#build with maven
-    - name: Build with Maven
-      run: mvn -B package --file pom.xml
-
-# Now this below action is to scan the code using Sonar
-    - name: Build and analyze
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=12Ashish1234_Microservices-assignment-1
-
-# STACKHAWK DAST scanning
-  stackhawk:
-    permissions:
-      contents: read # for actions/checkout to fetch code
-      security-events: write # for stackhawk/hawkscan-action to upload code scanning alert info
-    name: StackHawk
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-# Setting up of JDK is required because of version compatibility issues(Part of StackHawk scanning)
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-          cache: maven
-
-      - name: Start your service and add JDK 17
-        run: mvn spring-boot:run &                 # ✏️ Update this to run your own service to be scanned
-
-      - name: Run HawkScan
-        # uses: stackhawk/hawkscan-action@4c3258cd62248dac6d9fe91dd8d45928c697dee0      # This line here expects to find the STACKHAWK API key in a github secret named HAWK_API_KEY. Its used for saving the scan results
-        uses: stackhawk/hawkscan-action@v2.0.2
-        continue-on-error: true                   # ✏️ Set to false to break your build on scan errors
-        with:
-          apiKey: ${{ secrets.HAWK_API_KEY }}
-          codeScanningAlerts: true
-          githubToken: ${{ github.token }}
-
-# OWASP DAST scanning
-  zap_scan:
-    runs-on: ubuntu-latest
-    name: Scan the App
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-          cache: maven
-
-      - name: Start your service and add JDK 17
-        run: mvn spring-boot:run &
-
-      - name: ZAP Scan
-        uses: zaproxy/action-full-scan@v0.4.0
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          target: 'http://localhost:8085'
