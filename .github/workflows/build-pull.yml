@@ -17,10 +17,21 @@ jobs:
         distribution: 'temurin'
         cache: maven
 
+    - name: Determine version number
+      id: versioning
+      run: |
+          RUN_NUMBER=${{ github.run_number }}
+          START_VERSION="1.0.0"
+          MAJOR=$(echo $START_VERSION | cut -d '.' -f 1)
+          MINOR=$(echo $START_VERSION | cut -d '.' -f 2)
+          PATCH=$(echo $START_VERSION | cut -d '.' -f 3)
+          NEW_VERSION="${MAJOR}.${MINOR}.$((PATCH + RUN_NUMBER))"
+          echo "::set-output name=version::${NEW_VERSION}"
+
 # Jfrog artifactory login   
     - name: Login to DockerHub Registry, build and push
       run: |
           docker login -u ${{ secrets.JFROG_REGISTRY_USERNAME }} -p ${{ secrets.JFROG_REGISTRY_PASSWORD }} automotiveproject.jfrog.io
-          docker build . -t automotiveproject.jfrog.io/docker-local/springboot-app:${{ github.run_number }}
-          docker push automotiveproject.jfrog.io/docker-local/springboot-app:${{ github.run_number }}
+          docker build . -t automotiveproject.jfrog.io/docker-local/springboot-app:${{ steps.versioning.outputs.version }}
+          docker push automotiveproject.jfrog.io/docker-local/springboot-app:${{ steps.versioning.outputs.version }}
 
